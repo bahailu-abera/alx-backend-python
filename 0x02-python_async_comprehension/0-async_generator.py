@@ -12,5 +12,5 @@ async def async_generator() -> AsyncGenerator[float, None]:
     Returns a generator of radom numbers
     """
     for _ in range(10):
-        yield random.uniform(1, 10)
         await asyncio.sleep(1)
+        yield random.uniform(1, 10)
