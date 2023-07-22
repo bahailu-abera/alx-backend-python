@@ -3,7 +3,7 @@
 A test for the client methods
 """
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, PropertyMock
 from parameterized import parameterized
 
 from typing import (
@@ -30,3 +30,18 @@ class TestGithubOrgClient(unittest.TestCase):
         client.org()
         mock_get_json.assert_called_once_with(GithubOrgClient.ORG_URL.
                                               format(org=org_name))
+
+    def test_public_repos_url(self):
+        """
+        Test that the result of _public_repos_url is the expected one
+        based on the mocked payload
+        """
+        with patch('client.GithubOrgClient.org',
+                   new_callable=PropertyMock) as mock_org:
+            payload = {"repos_url": "World"}
+            mock_org.return_value = payload
+
+            client = GithubOrgClient('org name')
+            result = client._public_repos_url
+
+            self.assertEqual(result, payload["repos_url"])
