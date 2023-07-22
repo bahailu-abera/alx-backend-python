@@ -10,8 +10,7 @@ from typing import (
     Sequence,
     Any,
 )
-from utils import access_nested_map
-from utils import get_json
+from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -61,3 +60,31 @@ class TestGetJson(unittest.TestCase):
 
             mock_requests.get.assert_called_once_with(url)
             self.assertEqual(result, payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    Test memoize method
+    """
+    def test_memoize(self):
+        """
+        Test the memoize method
+        """
+        class TestClass:
+
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method') as mock_method:
+            mock_response = 100
+            mock_method.return_value = mock_response
+
+            tc = TestClass()
+            self.assertEqual(tc.a_property, mock_response)
+            self.assertEqual(tc.a_property, mock_response)
+
+            mock_method.assert_called_once()
